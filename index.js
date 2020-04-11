@@ -2,10 +2,18 @@ const express = require('express');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-
 const app = express();
 const port = process.env.PORT || 5000;
+
+// mongoDB configuration
+const db = require('./setup/config').mongoURL;
+
+// Attempt to connect to database
+mongoose.connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log('MongoDB Connected Successfully!!!'))
+    .catch(err => console.log(err));
 
 
 app.use(bodyParser.urlencoded({ extended: false }))
