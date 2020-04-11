@@ -24,7 +24,7 @@
                 <span class="text-warning">Stack</span><span class="text-warning"><b>overflow</b></span>
             </h1>
             <div class="col-lg-6">
-                <form action="/welcome" class="card" method="POST">
+                <form action="/api/profile" class="card" method="POST">
                     <div class="form-group">
                       <label for="">Your name</label>
                       <input type="text" name="name" id="name" class="form-control" placeholder="Enter your name" aria-describedby="helpId" required>
@@ -42,6 +42,7 @@
                         <textarea name="description" id="description" rows="4" class="form-control" placeholder="Enter question description here..." required></textarea>
                     </div>
                     <input type="submit" value="Submit" class="btn btn-info">
+                    <a href="/api/question" class="btn mt-3 btn-warning">Question Page</a>
                 </form>
             </div>
         </div>
