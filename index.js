@@ -1,9 +1,33 @@
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 8000;
+const ejs = require('ejs');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-app.get('/', (req, res) => {
-    res.send('Stack Overflow');
+
+const app = express();
+const port = process.env.PORT || 5000;
+
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use(bodyParser.json())
+app.set('view engine', 'ejs');
+
+
+// @route    -  GET   /
+// @desc    -   A route to home page
+// @access  -   PUBLIC
+app.get('/',(req, res) => {
+    res.render('home');
+})
+
+// @route    -  POST   /welcome
+// @desc    -   A route to welcome page
+// @access  -   PRIVATE
+app.post('/welcome', (req, res) => {
+    var data = req.body;
+    console.log(data);
+    res.render('index', {data: data});
 })
 
 app.listen(port, () => console.log(`Server is running on localhost at port ${port}`));
