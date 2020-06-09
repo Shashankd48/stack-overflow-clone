@@ -27,6 +27,9 @@ const PersonSchema = new Schema({
       default:
          "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png",
    },
+   gender: {
+      type: String,
+   },
    date: {
       type: Date,
       default: Date.now,

@@ -2,9 +2,16 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jsonwt = require("jsonwebtoken");
-const passport = require("passport");
 const key = require("../../setup/config");
 
+const ProfilePic = {
+   male:
+      "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png",
+   female:
+      "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_female2-512.png",
+   default:
+      "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-alt-512.png",
+};
 // import schema for person to register
 const Person = require("../../models/Person");
 
@@ -12,29 +19,47 @@ const Person = require("../../models/Person");
 // @desc    -   A route to register page
 // @access  -   PUBLIC
 router.post("/register", (req, res) => {
-   Person.findOne({ email: req.body.email })
+   Person.findOne({ email: req.body.email, username: req.body.username })
       .then((person) => {
          if (person) {
             return res.status(400).json({
                emailerror: "Email is already registered, please go to login.",
             });
          } else {
+            const { name, email, password, username, gender } = req.body;
+            let profilepic =
+               gender !== undefined && gender !== ""
+                  ? gender === "Male"
+                     ? ProfilePic.male
+                     : ProfilePic.female
+                  : ProfilePic.default;
             const newPerson = new Person({
-               name: req.body.name,
-               email: req.body.email,
-               password: req.body.password,
+               name,
+               email,
+               password,
+               username,
+               profilepic,
+               gender,
             });
             // encrypt password here using bcryptjs
             bcrypt.genSalt(10, (err, salt) => {
-               if (err)
+               if (err) {
                   res.status(200).json({ error: "Failded to generate salt!" });
+               }
+
                bcrypt.hash(newPerson.password, salt, (err, hash) => {
                   // Store hash in your password DB.
                   if (err) throw err;
+
                   newPerson.password = hash;
                   newPerson
                      .save()
-                     .then((person) => res.json(person))
+                     .then((person) => {
+                        person.password = undefined;
+                        person.date = undefined;
+                        person.__v = undefined;
+                        res.status(200).json(person);
+                     })
                      .catch((err) => {
                         res.status(400).json(err);
                         console.log(err);
@@ -96,18 +121,5 @@ router.post("/login", (req, res) => {
       })
       .catch((err) => console.log(err));
 });
-
-// @route    -  GET   /api/auth/profile
-// @desc    -   A route to login page
-// @access  -   PRIVATE
-router.get(
-   "/profile",
-   passport.authenticate("jwt", { session: false }),
-   (req, res) => {
-      // console.log(req);
-      const { id, name, email, profilepic } = req.user;
-      res.json({ id, name, email, profilepic });
-   }
-);
 
 module.exports = router;
