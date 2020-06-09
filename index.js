@@ -1,15 +1,9 @@
 require("dotenv").config();
 const express = require("express");
-const ejs = require("ejs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const path = require("path");
 const app = express();
 const port = process.env.PORT || 5000;
-
-// middleware for template engine
-var viewPath = path.join(__dirname, "app/views");
-app.set("view engine", "ejs");
 
 // Bring all routes
 const auth = require("./routes/api/auth");
@@ -31,19 +25,19 @@ mongoose
       useCreateIndex: true,
    })
    .then(() => console.log("MongoDB Connected Successfully!!!"))
-   .catch((err) => console.log(err));
+   .catch((err) => console.log("Failed To Connect DB"));
 
-// @route    -  GET   /api/auth
+// @middleware    -  /api/auth
 // @desc    -   A route to home page
 // @access  -   PUBLIC
 app.use("/api/auth", auth);
-app.use("/", auth);
-// @route    -  POST   /api/profile
+
+// @middleware    -  /api/prfile
 // @desc    -   A route to welcome page
 // @access  -   PRIVATE
 app.use("/api/profile", profile);
 
-// @route    -  GET   /api/question
+// @middleware    -  /api/quations
 // @desc    -   A route to welcome page
 // @access  -   PRIVATE
 app.use("/api/question", question);

@@ -5,13 +5,6 @@ const jsonwt = require("jsonwebtoken");
 const passport = require("passport");
 const key = require("../../setup/config");
 
-// @route    -  GET   /api/home
-// @desc    -   A route to home page
-// @access  -   PUBLIC
-router.get("/", (req, res) => {
-   res.render("home");
-});
-
 // import schema for person to register
 const Person = require("../../models/Person");
 
