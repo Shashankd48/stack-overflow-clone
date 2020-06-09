@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const passport = require("passport");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -13,6 +14,12 @@ const question = require("./routes/api/question");
 // Middleware for body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Configuration for JWT strategy
+require("./strategies/jsonwtStrategy")(passport);
 
 // mongoDB configuration
 const db = require("./setup/config").mongoURL;

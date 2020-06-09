@@ -62,10 +62,29 @@ router.post("/login", (req, res) => {
             .compare(password, person.password)
             .then((isCorrect) => {
                if (isCorrect) {
-                  res.status(200).json({
-                     email,
-                     message: "Login Successfully!",
-                  });
+                  // JWT authentication with passport.js strategy
+                  const payload = {
+                     id: person._id,
+                     email: person.email,
+                     name: person.name,
+                  };
+                  jsonwt.sign(
+                     payload,
+                     key.secret,
+                     { expiresIn: 3600 },
+                     (error, token) => {
+                        if (error) {
+                           res.status(500).json({
+                              success: false,
+                              error,
+                           });
+                        }
+                        res.status(200).json({
+                           success: true,
+                           token: `Bearer ${token}`,
+                        });
+                     }
+                  );
                } else {
                   res.status(400).json({
                      email,
@@ -77,5 +96,18 @@ router.post("/login", (req, res) => {
       })
       .catch((err) => console.log(err));
 });
+
+// @route    -  GET   /api/auth/profile
+// @desc    -   A route to login page
+// @access  -   PRIVATE
+router.get(
+   "/profile",
+   passport.authenticate("jwt", { session: false }),
+   (req, res) => {
+      // console.log(req);
+      const { id, name, email, profilepic } = req.user;
+      res.json({ id, name, email, profilepic });
+   }
+);
 
 module.exports = router;
